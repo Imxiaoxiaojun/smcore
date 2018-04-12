@@ -11,7 +11,7 @@ import java.sql.SQLException;
  * <p>说明:这个类中包含了许多默认配置,若这些配置符合您的情况,您可以不用管,若不符合,建议不要修改本类,建议直接在"application.yml"中配置即可</p>
  * Created by yj on 2018/4/10.
  */
-@Component
+@Component("druidProperties")
 @ConfigurationProperties(prefix = "spring.datasource")
 public class DruidProperties {
 
