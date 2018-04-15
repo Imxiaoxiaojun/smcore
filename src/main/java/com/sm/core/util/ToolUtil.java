@@ -1,5 +1,8 @@
 package com.sm.core.util;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
@@ -113,5 +116,22 @@ public class ToolUtil {
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * 获取异常的具体信息
+     */
+    public static String getExceptionMsg(Exception e) {
+        StringWriter sw = new StringWriter();
+        try {
+            e.printStackTrace(new PrintWriter(sw));
+        } finally {
+            try {
+                sw.close();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        }
+        return sw.getBuffer().toString().replaceAll("\\$", "T");
     }
 }
