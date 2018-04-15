@@ -13,7 +13,7 @@ import java.util.Date;
 
 /**
  * @ClassName DateUtil
- * @Description TODO
+ * @Description 日期工具
  * @Author zhuyajun
  * @Date 2018/4/13 下午3:18
  * @Version 1.0
@@ -126,9 +126,6 @@ public class DateUtil {
      * @Description:(日期比较，如果s>=e 返回true 否则返回false)
      * @param s
      * @param e
-     * @return boolean
-     * @throws
-     * @author luguosui
      */
     public static boolean compareDate(String s, String e) {
         if (parseDate(s) == null || parseDate(e) == null) {
@@ -223,8 +220,6 @@ public class DateUtil {
      *
      * @param beginDateStr
      * @param endDateStr
-     * @return long
-     * @author Administrator
      */
     public static long getDaySub(String beginDateStr, String endDateStr) {
         long day = 0;
