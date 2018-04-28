@@ -1,6 +1,10 @@
 package com.sm.core.util;
 
+import com.alibaba.druid.util.Base64;
+
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URISyntaxException;
@@ -133,5 +137,45 @@ public class ToolUtil {
             }
         }
         return sw.getBuffer().toString().replaceAll("\\$", "T");
+    }
+
+    public static String getRandStr(int len){
+        String str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        StringBuilder randStr = new StringBuilder();
+        for(int i = 0; i < len;i ++){
+            randStr.append(str.charAt((int)Math.round(Math.random() * (str.length() -1))));
+        }
+        return randStr.toString();
+    }
+
+    public static byte[] objToByte(Object object){
+        try {
+            ByteArrayOutputStream byt=new ByteArrayOutputStream();
+
+            ObjectOutputStream os=new ObjectOutputStream(byt);
+
+            os.writeObject(object);
+
+            return byt.toByteArray();
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
+    public static String encode(Object obj) {
+
+        if (obj instanceof String){
+            return Base64.byteArrayToBase64(((String)obj).getBytes());
+        }else {
+            byte[] bytes = objToByte(obj);
+            return Base64.byteArrayToBase64(bytes);
+        }
+
+    }
+
+    public static void main(String[] args) {
+        System.out.println(Base64.byteArrayToBase64("127.0.0.1".getBytes()));
     }
 }

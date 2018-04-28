@@ -12,9 +12,17 @@ public enum BizExceptionEnum implements SmExceptionService{
     PARAM_ERROR(4003,"参数错误"),
 
     /**
+     * 非法请求
+     */
+
+    REQUEST_ILLEGAL(4001,"非法请求"),
+
+    /**
      * 请求异常
      */
     SERVER_ERROR(9999, "服务器未知错误");
+
+
     private Integer code;
 
     private String message;
