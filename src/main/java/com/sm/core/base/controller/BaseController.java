@@ -1,8 +1,12 @@
 package com.sm.core.base.controller;
 
 
+import com.baomidou.mybatisplus.activerecord.Model;
+import com.baomidou.mybatisplus.plugins.Page;
 import com.sm.core.base.warpper.ResultWarpper;
 import com.sm.core.exception.SmExceptionService;
+import com.sm.core.support.HttpKit;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,5 +41,19 @@ public class BaseController {
         resultWarpper.setCode(exceptionEnum.getCode());
         resultWarpper.setMsg(exceptionEnum.getMessage());
         return resultWarpper;
+    }
+
+    protected Page getPage(int pageSize){
+        int pageNo = 1;
+        String reqPageNo = HttpKit.getRequest().getParameter("pageNo");
+        String reqPageSize = HttpKit.getRequest().getParameter("reqPageSize");
+
+        if (StringUtils.isNotBlank(reqPageNo)){
+            pageNo = Integer.valueOf(reqPageNo);
+        }
+        if (StringUtils.isNotBlank(reqPageSize)){
+            pageSize = Integer.valueOf(reqPageSize);
+        }
+        return new Page<>(pageNo,pageSize);
     }
 }

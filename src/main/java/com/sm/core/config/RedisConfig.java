@@ -62,6 +62,7 @@ public class RedisConfig extends CachingConfigurerSupport {
         factory.setPort(port);
         factory.setPassword(password);
         factory.setTimeout(timeout); //设置连接超时时间
+        factory.afterPropertiesSet();
         return factory;
     }
     @Bean

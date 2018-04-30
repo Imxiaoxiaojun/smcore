@@ -25,12 +25,14 @@ import java.util.concurrent.TimeUnit;
 public class RedisService {
 
     public static final String TOKEN_TYPE = "token";
+    public static final String BLACK_LIST = "blackList";
 
 
     public static final long ONE_HOUR = 1L * 60 * 60;
     public static final long TWO_HOUR = 2L * 60 * 60;
     public static final long ONE_DAY = 24L * 60 * 60;
     public static final long ONE_MINUTE = 1L * 60;
+    public static final long TWO_MINUTE = 2L * 60;
     public static final long TEN_MINUTE = 10L * 60;
     public static final long TWENTY_MINUTE = 20L * 60;
     public static final long THIRTY_MINUTE = 30L * 60;
@@ -40,7 +42,7 @@ public class RedisService {
     private RedisTemplate redisTemplate;
 
     /**
-     * 写入缓存
+     * 写入缓存不更新时间
      *
      * @param key
      * @param value
@@ -50,7 +52,9 @@ public class RedisService {
         boolean result = false;
         try {
             ValueOperations<Serializable, Object> operations = redisTemplate.opsForValue();
+            int tempTime = this.redisTemplate.getExpire(key).intValue()-1;
             operations.set(key, value);
+            redisTemplate.expire(key,tempTime,TimeUnit.SECONDS);
             result = true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -70,7 +74,9 @@ public class RedisService {
         try {
             ValueOperations<Serializable, Object> operations = redisTemplate.opsForValue();
             operations.set(key, value);
-            redisTemplate.expire(key, expireTime, TimeUnit.SECONDS);
+            if (expireTime != null){
+                redisTemplate.expire(key, expireTime, TimeUnit.SECONDS);
+            }
             result = true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -184,14 +190,33 @@ public class RedisService {
     }
 
     /**
-     * 集合添加
+     * 集合添加不修改时间
      *
      * @param key
      * @param value
      */
     public void add(String key, Object value) {
         SetOperations<String, Object> set = redisTemplate.opsForSet();
+        int tempTime = this.redisTemplate.getExpire(key).intValue()-1;
         set.add(key, value);
+        redisTemplate.expire(key,tempTime,TimeUnit.SECONDS);
+    }
+
+    /**
+     * 集合添加设置时间
+     *
+     * @param key
+     * @param value
+     */
+    public void add(String key, Object value,Long expireTime) {
+        SetOperations<String, Object> set = redisTemplate.opsForSet();
+        set.add(key, value);
+        redisTemplate.expire(key,expireTime,TimeUnit.SECONDS);
+    }
+
+    public boolean checkMember(String key, Object value){
+        SetOperations<String, Object> set = redisTemplate.opsForSet();
+        return set.isMember(key,value);
     }
 
     /**

@@ -246,17 +246,26 @@ public class DateUtil {
      * @param days
      * @return
      */
-    public static String getAfterDayDate(String days) {
-        int daysInt = Integer.parseInt(days);
+    public static Date getAfterDayDate(int day) {
 
-        Calendar canlendar = Calendar.getInstance(); // java.util包
-        canlendar.add(Calendar.DATE, daysInt); // 日期减 如果不够减会将月变动
-        Date date = canlendar.getTime();
 
-        SimpleDateFormat sdfd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String dateStr = sdfd.format(date);
-
-        return dateStr;
+//        int daysInt = Integer.parseInt(day);
+        Long now = System.currentTimeMillis();
+        if (day != 0){
+            long afterDay = now + day * 1000L * 60 * 60 * 24;
+            System.out.println(new Date(afterDay));
+            return new Date(afterDay);
+        }else {
+            return new Date();
+        }
+//        Calendar canlendar = Calendar.getInstance(); // java.util包
+//        canlendar.add(Calendar.DATE, daysInt); // 日期减 如果不够减会将月变动
+//        Date date = canlendar.getTime();
+//
+//        SimpleDateFormat sdfd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//        String dateStr = sdfd.format(date);
+//
+//        return dateStr;
     }
 
     /**
@@ -278,9 +287,23 @@ public class DateUtil {
         return dateStr;
     }
 
+    public static long getRemainTime(){
+        long now = System.currentTimeMillis();
+        long remainTime = getZeroTime(getAfterDayDate(1)) - now;
+        return remainTime;
+    }
+
+    public static Long getZeroTime(Date date){
+        long now = date.getTime() / 1000l;
+        long daySecond = 60 * 60 * 24;
+        long zeroTime = now - (now + 8 * 3600) % daySecond;
+        System.out.println(new Date(zeroTime * 1000l));
+        return zeroTime * 1000l;
+    }
+
     public static void main(String[] args) {
-        System.out.println(getTime(new Date()));
-        System.out.println(getAfterDayWeek("3"));
+//        System.out.println(getAllTime());
+        System.out.println(getRemainTime() / 1000l);
     }
 
 }
