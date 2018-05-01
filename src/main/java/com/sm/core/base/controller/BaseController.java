@@ -1,7 +1,6 @@
 package com.sm.core.base.controller;
 
 
-import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.sm.core.base.warpper.ResultWarpper;
 import com.sm.core.exception.SmExceptionService;
@@ -53,6 +52,7 @@ public class BaseController {
         }
         if (StringUtils.isNotBlank(reqPageSize)){
             pageSize = Integer.valueOf(reqPageSize);
+            if (pageSize > 20) pageSize = 20;
         }
         return new Page<>(pageNo,pageSize);
     }
