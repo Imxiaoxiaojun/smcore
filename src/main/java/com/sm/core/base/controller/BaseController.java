@@ -45,7 +45,7 @@ public class BaseController {
     protected Page getPage(int pageSize){
         int pageNo = 1;
         String reqPageNo = HttpKit.getRequest().getParameter("pageNo");
-        String reqPageSize = HttpKit.getRequest().getParameter("reqPageSize");
+        String reqPageSize = HttpKit.getRequest().getParameter("pageSize");
 
         if (StringUtils.isNotBlank(reqPageNo)){
             pageNo = Integer.valueOf(reqPageNo);
