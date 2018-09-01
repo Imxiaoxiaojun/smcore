@@ -11,9 +11,8 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 
 import java.util.*;
 
-@SuppressWarnings("deprecation")
 @JsonFilter("JacksonFilter")
-public class JacksonJsonFilter extends FilterProvider{
+public class JacksonJsonFilter extends FilterProvider {
 
     Map<Class<?>, Set<String>> includeMap = new HashMap<>();
     Map<Class<?>, Set<String>> filterMap = new HashMap<>();

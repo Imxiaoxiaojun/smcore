@@ -6,6 +6,7 @@ import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.http.server.ServletServerHttpResponse;
+import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.method.support.ModelAndViewContainer;
@@ -19,21 +20,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Component
 public class JsonReturnHandler implements HandlerMethodReturnValueHandler, BeanPostProcessor {
 
     List<ResponseBodyAdvice<Object>> advices = new ArrayList<>();
 
     @Override
     public boolean supportsReturnType(MethodParameter returnType) {
-        boolean hasJSONAnno = returnType.getMethodAnnotation(JSON.class) != null || returnType.getMethodAnnotation(JSONS.class) != null;
-        return hasJSONAnno;
+        return returnType.getMethodAnnotation(JSON.class) != null || returnType.getMethodAnnotation(JSONS.class) != null;
     }
 
     @Override
     public void handleReturnValue(Object returnValue, MethodParameter returnType, ModelAndViewContainer mavContainer,
                                   NativeWebRequest webRequest) throws Exception {
         mavContainer.setRequestHandled(true);
-        for (int i=0;i<advices.size();i++){
+        for (int i = 0; i < advices.size(); i++) {
             ResponseBodyAdvice<Object> ad = advices.get(i);
             if (ad.supports(returnType, null)) {
                 returnValue = ad.beforeBodyWrite(returnValue, returnType, MediaType.APPLICATION_JSON_UTF8, null,
@@ -43,17 +44,15 @@ public class JsonReturnHandler implements HandlerMethodReturnValueHandler, BeanP
         }
 
         HttpServletResponse response = webRequest.getNativeResponse(HttpServletResponse.class);
-        Annotation[] annos = returnType.getMethodAnnotations();
+        Annotation[] annotations = returnType.getMethodAnnotations();
         CustomerJsonSerializer jsonSerializer = new CustomerJsonSerializer();
-        Arrays.asList(annos).forEach(a -> {
+        Arrays.asList(annotations).forEach(a -> {
             if (a instanceof JSON) {
                 JSON json = (JSON) a;
                 jsonSerializer.filter(json);
             } else if (a instanceof JSONS) {
                 JSONS jsons = (JSONS) a;
-                Arrays.asList(jsons.value()).forEach(json -> {
-                    jsonSerializer.filter(json);
-                });
+                Arrays.asList(jsons.value()).forEach(json -> jsonSerializer.filter(json));
             }
         });
 
@@ -67,7 +66,6 @@ public class JsonReturnHandler implements HandlerMethodReturnValueHandler, BeanP
         return bean;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         if (bean instanceof ResponseBodyAdvice) {
@@ -75,19 +73,8 @@ public class JsonReturnHandler implements HandlerMethodReturnValueHandler, BeanP
         } else if (bean instanceof RequestMappingHandlerAdapter) {
             List<HandlerMethodReturnValueHandler> handlers = new ArrayList<>(
                     ((RequestMappingHandlerAdapter) bean).getReturnValueHandlers());
-            JsonReturnHandler jsonHandler = null;
-            for (int i = 0; i < handlers.size(); i++) {
-                HandlerMethodReturnValueHandler handler = handlers.get(i);
-                if (handler instanceof JsonReturnHandler) {
-                    jsonHandler = (JsonReturnHandler) handler;
-                    break;
-                }
-            }
-            if (jsonHandler != null) {
-                handlers.remove(jsonHandler);
-                handlers.add(0, jsonHandler);
-                ((RequestMappingHandlerAdapter) bean).setReturnValueHandlers(handlers); // change the jsonhandler sort
-            }
+            handlers.add(0, this);
+            ((RequestMappingHandlerAdapter) bean).setReturnValueHandlers(handlers);
         }
         return bean;
     }

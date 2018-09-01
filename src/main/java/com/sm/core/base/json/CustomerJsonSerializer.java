@@ -6,14 +6,13 @@ import org.apache.commons.lang.StringUtils;
 
 public class CustomerJsonSerializer {
 
-
     ObjectMapper mapper = new ObjectMapper();
     JacksonJsonFilter jacksonFilter = new JacksonJsonFilter();
 
     /**
-     * @param clazz target type
+     * @param clazz   target type
      * @param include include fields
-     * @param filter filter fields
+     * @param filter  filter fields
      */
     public void filter(Class<?> clazz, String include, String filter) {
         if (clazz == null) return;
@@ -30,6 +29,7 @@ public class CustomerJsonSerializer {
         mapper.setFilterProvider(jacksonFilter);
         return mapper.writeValueAsString(object);
     }
+
     public void filter(JSON json) {
         this.filter(json.type(), json.include(), json.filter());
     }
